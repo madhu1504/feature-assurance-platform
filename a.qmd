@@ -1,0 +1,440 @@
+---
+title: "Evaluating the Efficiency of Milestone Feature on Instagrammer's User Engagement"
+author: "Y3954308"
+date: last-modified
+date-format: "MMMM D, YYYY"
+format: pdf
+editor: visual
+css: styles.css
+---
+
+### Abstract
+
+This analysis will apply Linear Mixed Effects Modelling to critically compare a Random Intercept Model( users nested within 12 countries) with a Random Intercept+ Slope Model allowing varying effects of 'Milestones' across countries. Then, stochastic analysis will determine the smallest sample needed for future trials having 90% power. It will conclude with strategic recommendations based on both analyses.
+
+**About the Dataset**
+
+```{r}
+#| message: false
+#| warning: false
+library(tidyverse) 
+app <- readr::read_csv("opt1_app.csv")
+head(app)
+length(unique(app$user))
+```
+
+It contains 8572 users, their weekly engagement(app_use in minutes) and involves separate groups; test(milestones feature;**ms_feat=1**) and control (regular users;**ms_feat=0**). The participants belong to:
+
+```{r}
+unique(app$country)
+```
+
+**Data Formatting**
+
+The feature-levels will be converted to factors. 
+
+```{r}
+#| echo: true
+#| results: 'hide'
+app <- mutate(app, ms_feat.f= factor(ms_feat, levels= c(0,1)),
+              country= factor(country))
+```
+
+**The Analysis will require the following packages:**
+
+```{r}
+#| message: false
+#| warning: false
+library(tidyverse)    # for data wrangling
+library(lme4)         # for model fitting
+library(lmerTest)     # significance tests
+library(lattice)      # for plotting random effects
+library(performance)  # for checking model assumptions
+library(dplyr) 
+library(lmtest) #for doing likelihood ratio test
+library(see)
+library(lsr)
+library(sjPlot) #plotting
+library(patchwork) #for combining plots
+library(ggridges) #ridge plot
+library(broom.mixed) # for model-fitted values
+options(scipen=999) 
+```
+
+### **Descriptive Statistics**
+
+1.  **Inspecting the Missingness**
+
+```{r}
+# percentage of users missing in app_use
+mean(is.na(app$app_use)) * 100
+#no of users missing per group
+table(app$country,app$ms_feat, is.na(app$app_use))
+```
+
+4.7% of app_usage values were missing, accounted for by updated terms and conditions, possibly reflect Missing at Random rather than completely random(MCAR). Given the even, low spread of MAR data and the robustness of mixed-effects models, it reduces concern of substantial bias. 
+
+2.  Mean Engagement , for Control and Test groups per country is :
+
+```{r}
+app %>%
+  group_by(country, ms_feat) %>%
+  rename(Country= 'country') %>%
+  summarise(mean_use = mean(app_use, na.rm = TRUE), .groups = "drop") %>%
+  pivot_wider(names_from = ms_feat,values_from = mean_use ) %>%
+  rename(Control = `0`, Milestones = `1`)
+```
+
+Highest engagement was found in milestone group in Italy and the lowest in control group of Belgium. Mostly engagement is higher for all test groups than control groups, except for Portugal and UK. 
+
+**Visual Distribution**
+
+A Ridge plot was chosen to include all countries,  test and control groups, to observe potential country variation in baseline engagement and feature-effect.
+
+```{r}
+#| message: false
+#| warning: false
+figure1 <- ggplot(app, aes(x = app_use, y = ms_feat.f, fill = ms_feat.f)) +
+  geom_density_ridges(alpha = 0.85, scale = 1.5) +
+  facet_wrap(~ country, ncol = 4) + 
+  scale_fill_manual(values = c("#660033", "#CC6699"),
+    labels = c("0= Control", "1=Milestone Users")) +
+  theme_minimal() +
+  labs(title = "App Usage Distribution Across Countries and Conditions", x = "Weekly App Usage", y = "Condition", 
+    caption = "Figure 1: Ridge plot", fill = "Group") +
+  theme(plot.title = element_text(size = 14, face = "bold"), 
+    plot.caption = element_text(hjust = 0.5, size = 10, face = "italic"), plot.background = element_rect(color = "black", fill = "white", linewidth = 1))
+figure1
+```
+
+There is a visible positive shift in engagement for milestone users in countries like Spain, Italy, France and Germany. Importantly, for Portugal and UK, the controls have higher engagement than test group, suggesting that features-effect could differ regionally. 
+
+### **Analysis**
+
+**Random intercepts model (RIM)**
+
+**Methodological justification & specification**
+
+It is an appropriate model because the outcome variable is continuous, unlike a t-test, that isn’t sensitive to geographic differences, by applying "complete pooling", the RIM acknowledges users nested in 12 different countries by 'partial pooling'. For example, users in Spain may engage more than users in Belgium regardless of feature, RIM applies the global average to stabilize estimates for countries with greater variance, which reduces over-fitting of the estimates(Ramírez, 2021).
+
+The model formatted as an equation:
+
+'app_useij​ = γ00​ +β1​ms_feat.fij​ + u0j​ + ϵij'​
+
+1.  app_useij : usage for user 'i' in country 'j'
+
+2.  γ00: average usage-control group
+
+3.  β1: Fixed effect-milestone feature (fixed slope)
+
+4.  u0j: Random Intercept for country 'j': displacement from global average
+
+5.  ​ϵij: Individual residual-error
+
+RIM fit allows countries to vary in their baseline engagement to generalize for population variability. This enables the product analyst to evaluate the ‘true’ milestone feature-effect.
+
+```{r}
+ app_rim <- lmer(app_use ~ ms_feat.f +  (1|country), data = app) 
+```
+
+**Intraclass Correlation Coefficient (ICC)**
+
+A statistical tool measuring the proportion of total variance explained by cluster effects(country-level differences in engagement) (Wu , 2024).
+
+**Results**
+
+```{r}
+summary(app_rim)
+icc(app_rim)
+```
+
+**Interpretation**
+
+There is a significant difference between the two feature conditions(milestone vs control) p \< .001, after controlling for country-level variation.
+
+The estimated weekly app-usage for the baseline condition (control group) is 68.81 across countries. The 'Milestones' feature significantly increased engagement by approximately 11.16 minutes per week, based on the country, indicating a positive effect on engagement. Importantly, residual errors ( 220.8) were larger than between-country variance(166.6).
+
+Additionally the ICC, reveals that 43% of the total variance in engagement is attributable to country-level differences.
+
+**Visual Interpretation**
+
+Intercept Deviation and Spaghtetti plot apt for tracing feature behaviour of multiple clusters.
+
+```{r}
+#| message: false
+#| warning: false
+# Extract random intercepts
+app_int <- ranef(app_rim)$country %>%
+  tibble::rownames_to_column("country")
+# Create ggplot for intercepts
+figure2 <- ggplot(app_int, aes(x = `(Intercept)`,y = reorder(country, `(Intercept)`))) +
+  geom_point(size = 3, color = "steelblue") +
+  theme_minimal() +
+  labs( x = "Random Intercept",y = "Country", caption = "Figure.2") +
+  theme(plot.caption = element_text(hjust = 0.2, size = 9, face= "italic"))
+# Fitted-values plot
+app_fitted <- broom.mixed::augment(app_rim)
+figure3 <- ggplot(app_fitted, aes(x = ms_feat.f,y = app_use,color = country)) +geom_line(aes(y = .fitted,group = country),linewidth = 1.2) +
+  scale_color_brewer(palette = "Paired") +
+  theme_minimal() +
+  labs(x = "Condition (0 = Control, 1 = Test)",y = "Weekly App Usage", caption = "Figure.3: Parallel lines show the shared 11.16 slope")+
+  theme(plot.caption = element_text(hjust = 0.5, size = 9, face= "italic"), legend.title = element_text(size = 9),
+    legend.text = element_text(size = 8))
+# Combine
+combined_plots <- figure2 + figure3
+final_rsm <- combined_plots + 
+  plot_annotation() & 
+  theme( plot.background = element_blank(),panel.background = element_blank(),
+plot.margin = margin(10, 10, 10, 10), plot.title = element_text(hjust = 0.5))
+finalrim_figure <- wrap_elements(final_rsm) + 
+  theme(plot.background = element_rect(color = "black", fill = "white", linewidth = 1.5))+ labs(title = "Random Intercepts by Country & Fixed Slope: Feature Influence")
+options(repr.plot.width = 40, repr.plot.height = 10)
+finalrim_figure
+```
+
+Figures, revealed that Spain has the highest positive deviation from global intercept and Belgium showing the highest negative deviation. 
+
+**Random Intercepts + Slopes Model (RISM)**
+
+**Methodological Justification & Specification**
+
+In contrast to RIM, that assumes the 'Milestones' feature causes a homogenous increase in engagement, the RISM allows Milestone's influence to vary(by adding random slopes). This enables product analysts to capture realistic insights due to unaccounted local market trends that could consecutively impact engagement, reducing chances of a type-1 error(Heisig, 2019). 
+
+In the equation for RISM, (u1j ) is added to the RIM equation, which accounts for  the country-specific Milestones effect(slope). The new model can be equated as:
+
+app_useij​= γ00​ ​+ (β1​+u1j​)(ms_featij​)+ u0j​+ ϵij
+
+```{r}
+app_rsm <- lmer(app_use ~ 1 + ms_feat.f + (1+ms_feat.f|country), data = app)
+```
+
+**Results**
+
+```{r}
+summary(app_rsm)
+```
+
+**ICC**
+
+```{r}
+icc(app_rsm)
+```
+
+**Interpretation**
+
+Fixed effects for the Milestones feature remained positive and statistically significant (β=11.31, SE = 4.48, p=.028), indicating that on average test groups spent 11 additional minutes compared to the control.
+
+Based on Intercept’s variance, 128.2 represents the variability in minutes of  baseline engagement(control group). Variability of  milestone features across countries is 239.3 (ms_feat.f1). Residual variance of 166.6 represents individual-level variability after controlling for country and feature-effect. 
+
+Approximately 58% of the variance(ICC) in engagement is attributed to country-level differences while depending on feature condition.
+
+**Visual Interpretation**
+
+**Intercept & Slope Deviation Graphs**
+
+```{r}
+#| message: false
+#| warning: false
+# extracting random intercepts 
+app_rsm_effects <- lme4::ranef(app_rsm)$country %>%
+  tibble::rownames_to_column("country")
+# slope
+app_rsm_effects <- app_rsm_effects %>% 
+  mutate(country = reorder(country, `(Intercept)`))
+#  Random Intercepts 
+figure2_int <- ggplot(app_rsm_effects, aes(x = `(Intercept)`, y = country)) +
+  geom_point(size = 3, color = "steelblue") +
+  theme_minimal() +
+  labs(title = "Random Intercepts", x = "Random Intercept Deviation", y = "Country", caption = "Figure. 4a") +
+  theme(plot.caption = element_text(hjust = 0.2, size = 9, face = "italic"), 
+    axis.text.y = element_text(size = 9), 
+    axis.text.x = element_text(size = 9))
+# Random Slopes
+figure2_slope <- ggplot(app_rsm_effects, aes(x = ms_feat.f1, y = country)) +
+  geom_point(size = 3, color = "darkgreen") +
+  theme_minimal() +
+  labs(title = "Random Slopes", x = "Random Feature Influence", y = "Country", caption = "Figure. 4b") +
+  theme(plot.caption = element_text(hjust = 0.2, size = 9, face = "italic"), 
+    axis.text.y = element_text(size = 9), axis.text.x = element_text(size = 9))
+# combine
+final_rsmplot <- (figure2_int + figure2_slope) 
+finalrsm_figure <- wrap_elements(final_rsmplot) + 
+  theme(plot.background = element_rect(color = "black", fill = "white", linewidth = 1.5))
+options(repr.plot.width = 18, repr.plot.height = 8)
+finalrsm_figure
+```
+
+**Spaghtetti plot**
+
+```{r}
+#  model-fitted values 
+app_fitrs <- broom.mixed::augment(app_rsm)
+#plotting
+ggplot(app_fitrs, aes(x = ms_feat.f, y = app_use, color = country)) +
+  # 2. This keeps your parallel model lines clean and straight
+  geom_line(aes(y = .fitted, group = country), linewidth = 1.2) + 
+  scale_color_brewer(palette = "Paired")+
+  theme_minimal() +
+  labs(title = "App Usage: Random Slope Model",
+    subtitle = "Non-Parallel lines showing varied effects of Milestone",x = "Condition (0 = Control, 1 = Test)",y = "Weekly App Usage", caption = "Figure. 5")+
+  theme(plot.background = element_rect(color = "black", fill = "white", linewidth = 1), plot.caption = element_text(hjust = 0.5, size = 10, face = "italic"), plot.subtitle =element_text(size = 10))
+```
+
+Figure .4 depicts that Spain and Portugal have the highest weekly engagement for control groups, however based on Figure. 5, Spain shows the highest positive-effect in engagement while Portugal shows a negative one. Reflecting that higher intercept doesn't determine greater positive-effect of milestones.  
+
+**Model Selection**
+
+Likelihood ratio-test(LRT) can help product analysts make a confident decision on whether including country variation in milestone feature-effects  improves model reliability. Anova was chosen for its compatibility for nested mixed-effects models(Kingdom, 2016).
+
+```{r}
+#Likelihood Ratio Test 
+anova(app_rim, app_rsm)
+```
+
+RISM is considered  the better fit because it has much lower AIC (65109 vs 67353), much higher log-likelihood and is highly significant LRT (χ² = 2248.3, p \< 0.001)
+
+### Assumptions & Diagnostics
+
+1.  **Linearity** **and Homoscedasticity**
+
+```{r}
+(check_model(app_rsm, check = "linearity"))
+```
+
+The reference line is mostly flat, showing a minor deviation at the tail. However there are no visible U/S curves. Furthermore, the vertical spread of the individual residual points is highly uniform across all vertical strips. Hence the assumption of linearity is mostly met and Homoscedasticity is sufficiently satisfied.
+
+2.  **Normality of Residuals**
+
+```{r}
+check_model(app_rsm, check = "normality")
+# Inspect further via QQ plot
+check_model(app_rsm, check = "qq")
+```
+
+This Density and QQ-style residual diagnostic suggests normality assumption is largely satisfied, with only mild deviations in the tails.
+
+3.  **Normality of Random intercepts & slopes**
+
+It is crucial to ensure whether the country-level variations of milestone feature-effect on engagement  is symmetrically distributed to ensure the validity of RISM.
+
+```{r}
+#level 2 Diagnostics: Normality of Intercepts and Slopes
+random_effects <- ranef(app_rsm)$country
+qqnorm(random_effects$"(Intercept)", main = "Q-Q Plot: Random Intercepts")
+qqline(random_effects$"(Intercept)")
+
+qqnorm(random_effects$ms_feat.f1, main = "Q-Q Plot: Random Slopes")
+qqline(random_effects$ms_feat.f1)
+```
+
+For a sample of just 12 clusters, both plots are stable, with no heavy skews or highly tailed outliers. Thereby normality of intercepts and slopes is reasonably satisfied.
+
+### Part II: Stochastic Power Analysis
+
+**Method Justification**
+
+Testing the minimum sample requirement for 90% power based on RISM for future trials. The stochastic methods can handle mixed and multiple random effects that generally causes a standard power analysis to collapse when dealing with clustered data (Brysbaert, 2018) . It assumes the future variance structures to resemble the current dataset’s.
+
+```{r}
+#| message: false
+#| warning: false
+# Create data index
+index <- 1:nrow(app)
+# Empty dataframe
+sim_results1 <- data.frame(
+  n_ppts = NULL,p_val = NULL)
+# Counter
+row_counter1 <- 0
+#  sample sizes
+for (n in seq(100, 1200, 90)) {
+  for (i in 1:1000) {
+    # Resample rows
+    resample_index1 <- sample(index, size = n,
+                             replace = TRUE)
+    # Create resampled dataset
+    resample_dat1 <- app[resample_index1, ]
+    # Fit model
+    new_mod1 <- lmer(app_use ~ ms_feat.f + (1 + ms_feat.f | country),
+      data = resample_dat1)
+    # Store results
+    row_counter1 <- row_counter1 + 1
+    sim_results1[row_counter1, "n_ppts"] <- n
+    sim_results1[row_counter1, "p_val"] <-
+      summary(new_mod1)$coefficients[
+        "ms_feat.f1",
+        "Pr(>|t|)" ]}}
+# Calculate power for each set of participants
+sim_power1 <- sim_results1 %>% 
+  group_by(n_ppts) %>% 
+  summarise(power = mean(p_val < .05))
+sim_power1
+#Quantifying the convergence and singular-fit issues
+fail_count <- 0
+total_models <- 1000
+model_try <- try(
+  lmer(app_use ~ ms_feat.f + (1 + ms_feat.f | country),
+       data = resample_dat),
+  silent = TRUE)
+if(class(model_try) == "try-error") {
+  fail_count <- fail_count + 1}
+fail_count
+#proportion: showing zero model fails
+fail_count / total_models 
+```
+
+```{r}
+#visualizing the power analysis
+ggplot(sim_power1, aes(x = n_ppts, y = power)) +  
+  geom_path(linewidth = 1) +  
+   # 90% power horizontal reference line
+  geom_hline(yintercept = 0.9, linetype = "longdash", color = "darkgray") +  
+  geom_vline(xintercept = 1000, linetype = "dotted", color = "#660033", linewidth = 0.8) +
+  # adding the dot at intersection point
+  geom_point(data = filter(sim_power1, n_ppts == 1000), color = "#660033", size = 4) +  
+  geom_text(data = filter(sim_power1, n_ppts == 1000), 
+    aes(label = paste("n = 1000\nPower =", round(power, 3))), 
+    color = "#660033", fontface = "bold",vjust = 1.2, hjust = -0.15) +
+  theme_minimal() + 
+  theme(plot.background = element_rect(color = "black", linewidth = 1))+
+labs(x = "Sample Size(Minimum Number of Participants)", y = "Statistical Power") + coord_cartesian(clip = "off")
+```
+
+#### **Interpretation**
+
+To achieve 90% statistical power, a minimum requirement of 1000 participants was estimated as seen on Figure. 6(intersection point).
+
+### **Critical Evaluation and Conclusion**
+
+The main positive strength of the fitted mixed-effects models is accounting for nested structure(countries) of the data, which often gets overlooked in t-tests. Although both RIM and RISM found a significant relationship of milestone effect on app engagement, the RISM meaningfully captured data better and is comparatively practical for planning effective strategies.
+
+The findings of RIM could be oversimplified, due to its restrictive modelling assumptions. When a random slope was added, residual errors reduced from 220 to 166.6 . Antonakis, (2019) explains that RIM assumes a homogenous feature-effect, hence the differences between countries gets masked and consecutively increases individual residual-error. This assumption could be unrealistic given figure.1 & figure.5 showing only UK and Poland having declined engagement for test group. 
+
+Additionally, when RISM was fitted, standard error increased from 0.3 to 4.9. Theoretically it reflects lower statistical precision and greater uncertainty,  but it provides a more realistic estimate because the model doesn’t assume homogenous feature-effects globally(Bristol, 2026). Furthermore, the ICC of RISM(58%) being higher than the RIM(43%), indicated that more variability was recognised as country-level rather than purely individual noise, showing how feature-effect  is regionally subjective.  
+
+Imagining the perspective of a product analyst, the RISM presented more detailed insights. Since it depicted how countries like Spain and Italy had greater positive response on engagement compared to others (steeper slopes as seen on figure.5), Instagrammer may strategically benefit from fast-tracking roll-out and investment on marketing in these regions. Whereas countries like Portugal and UK, urges analysts to investigate them further for macro-market conditions or local competitors(having similar features) for incentivising Instagrammar to stand-out. Although complex, this shows how RISM is the better model, as supported by the LRT.
+
+Power analysis revealed that larger samples of 1000 is required to account for substantial between-country variances of feature-effect and to stabilise parameter uncertainty. However it is important to recognize a few limitations. Theoretically, 30-50 clusters(countries) are recommended to gain reliable stability of heterogenous feature-effects(slopes)(Wiley, 2018).  Although not considered problematic by the quality check, a small proportion of singular-fit and convergence warnings were reflected in the analysis; future alternative recommendations could be Bayesian analysis as it handles data with few clusters well(McNeish, 2016).  
+
+Furthermore, engagement was recorded only for the first week. This means the findings cannot reflect whether engagement is sustained or if some regions are slower/faster to accept new features in the market. To conclude a mixed effects model capturing longitudinal data over a few months and includes more clusters to evaluate feature-effect on engagement can enable the product analyst to plan even reliable and effective localised strategies. 
+
+**Word Count excluding main headings:** 1500
+
+### References
+
+Antonakis, J., Bastardoz, N., & Rönkkö, M. (2019). On Ignoring the Random Effects Assumption in Multilevel Models: Review, Critique, and Recommendations. *Organizational Research Methods*, 109442811987745. https://doi.org/10.1177/1094428119877457
+
+Bristol (Ed.). (2026). *Random slope models*. Www.bristol.ac.uk. https://www.bristol.ac.uk/cmm/learning/videos/random-slopes.html
+
+Brysbaert, M., & Stevens, M. (2018). Power Analysis and Effect Size in Mixed Effects Models: A Tutorial. *Journal of Cognition*, *1*(1). https://doi.org/10.5334/joc.10
+
+Heisig, J. P., & Schaeffer, M. (2019). Why You Should Always Include a Random Slope for the Lower-Level Variable Involved in a Cross-Level Interaction. *European Sociological Review*, *35*(2), 258–279. https://doi.org/10.1093/esr/jcy053
+
+Kingdom, F. A. A., & Prins, N. (2016). Model Comparisons. *Psychophysics*, 247–307. https://doi.org/10.1016/b978-0-12-407156-8.00009-8
+
+McNeish, D., & Stapleton, L. M. (2016). Modeling Clustered Data with Very Few Clusters. *Multivariate Behavioral Research*, *51*(4), 495–518. https://doi.org/10.1080/00273171.2016.1167008
+
+Ramírez-Aldana, R., & Naranjo, L. (2021). Random intercept and linear mixed models including heteroscedasticity in a logarithmic scale: Correction terms and prediction in the original scale. *PLOS ONE*, *16*(4), e0249910. https://doi.org/10.1371/journal.pone.0249910
+
+Wiley, R. W., & Rapp, B. (2018). Statistical analysis in Small-N Designs: using linear mixed-effects modeling for evaluating intervention effectiveness. *Aphasiology*, *33*(1), 1–30. https://doi.org/10.1080/02687038.2018.1454884
+
+Wu , S. (2024). *Comparison of Methods for Estimating the Intraclass Correlation Coefficient for Binary Responses in Cancer Prevention Cluster Randomized Trials*. Nih.gov. https://pmc.ncbi.nlm.nih.gov/articles/PMC3426610/

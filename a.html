@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Y3954308">
+<meta name="dcterms.date" content="2026-05-22">
+
+<title>Evaluating the Efficiency of Milestone Feature on Instagrammer’s User Engagement</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="a_files/libs/clipboard/clipboard.min.js"></script>
+<script src="a_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="a_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="a_files/libs/quarto-html/popper.min.js"></script>
+<script src="a_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="a_files/libs/quarto-html/anchor.min.js"></script>
+<link href="a_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="a_files/libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="a_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="a_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="a_files/libs/bootstrap/bootstrap-138a6193a3bd40baf1e627da441a4734.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Evaluating the Efficiency of Milestone Feature on Instagrammer’s User Engagement</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Y3954308 </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 22, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="abstract" class="level3">
+<h3 class="anchored" data-anchor-id="abstract">Abstract</h3>
+<p>This analysis will apply Linear Mixed Effects Modelling to critically compare a Random Intercept Model( users nested within 12 countries) with a Random Intercept+ Slope Model allowing varying effects of ‘Milestones’ across countries. Then, stochastic analysis will determine the smallest sample needed for future trials having 90% power. It will conclude with strategic recommendations based on both analyses.</p>
+<p><strong>About the Dataset</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>app <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"opt1_app.csv"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(app)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+  user     country ms_feat app_use
+  &lt;chr&gt;    &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+1 3fe6fadd UK            0      91
+2 dd0bf80b UK            0      64
+3 938db17c UK            1      82
+4 b0d287be UK            1      78
+5 6ec93501 UK            1      45
+6 8161385a UK            0      87</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(app<span class="sc">$</span>user))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 8572</code></pre>
+</div>
+</div>
+<p>It contains 8572 users, their weekly engagement(app_use in minutes) and involves separate groups; test(milestones feature;<strong>ms_feat=1</strong>) and control (regular users;<strong>ms_feat=0</strong>). The participants belong to:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(app<span class="sc">$</span>country)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "UK"          "Germany"     "Italy"       "France"      "Netherlands"
+ [6] "Belgium"     "Spain"       "Portugal"    "Greece"      "Austria"    
+[11] "Denmark"     "Ireland"    </code></pre>
+</div>
+</div>
+<p><strong>Data Formatting</strong></p>
+<p>The feature-levels will be converted to factors.&nbsp;</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>app <span class="ot">&lt;-</span> <span class="fu">mutate</span>(app, <span class="at">ms_feat.f=</span> <span class="fu">factor</span>(ms_feat, <span class="at">levels=</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>)),</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">country=</span> <span class="fu">factor</span>(country))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>The Analysis will require the following packages:</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)    <span class="co"># for data wrangling</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)         <span class="co"># for model fitting</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmerTest)     <span class="co"># significance tests</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lattice)      <span class="co"># for plotting random effects</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)  <span class="co"># for checking model assumptions</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr) </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmtest) <span class="co">#for doing likelihood ratio test</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(see)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lsr)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sjPlot) <span class="co">#plotting</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork) <span class="co">#for combining plots</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggridges) <span class="co">#ridge plot</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed) <span class="co"># for model-fitted values</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen=</span><span class="dv">999</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="descriptive-statistics" class="level3">
+<h3 class="anchored" data-anchor-id="descriptive-statistics"><strong>Descriptive Statistics</strong></h3>
+<ol type="1">
+<li><strong>Inspecting the Missingness</strong></li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># percentage of users missing in app_use</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(<span class="fu">is.na</span>(app<span class="sc">$</span>app_use)) <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4.701353</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#no of users missing per group</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(app<span class="sc">$</span>country,app<span class="sc">$</span>ms_feat, <span class="fu">is.na</span>(app<span class="sc">$</span>app_use))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>, ,  = FALSE
+
+             
+                0   1
+  Austria     301 291
+  Belgium     373 385
+  Denmark     328 347
+  France      382 373
+  Germany     363 359
+  Greece      362 346
+  Ireland     348 340
+  Italy       339 380
+  Netherlands 297 302
+  Portugal    340 341
+  Spain       302 272
+  UK          369 329
+
+, ,  = TRUE
+
+             
+                0   1
+  Austria      15  19
+  Belgium      18  10
+  Denmark      25  22
+  France       17  20
+  Germany      22  19
+  Greece       12  11
+  Ireland      19   9
+  Italy        17  17
+  Netherlands  11  12
+  Portugal     10  21
+  Spain        20  15
+  UK           29  13</code></pre>
+</div>
+</div>
+<p>4.7% of app_usage values were missing, accounted for by updated terms and conditions, possibly reflect Missing at Random rather than completely random(MCAR). Given the even, low spread of MAR data and the robustness of mixed-effects models, it reduces concern of substantial bias.&nbsp;</p>
+<ol start="2" type="1">
+<li>Mean Engagement , for Control and Test groups per country is :</li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>app <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(country, ms_feat) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Country=</span> <span class="st">'country'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_use =</span> <span class="fu">mean</span>(app_use, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> ms_feat,<span class="at">values_from =</span> mean_use ) <span class="sc">%&gt;%</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Control =</span> <span class="st">`</span><span class="at">0</span><span class="st">`</span>, <span class="at">Milestones =</span> <span class="st">`</span><span class="at">1</span><span class="st">`</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 12 × 3
+   Country     Control Milestones
+   &lt;fct&gt;         &lt;dbl&gt;      &lt;dbl&gt;
+ 1 Austria        78.9       92.8
+ 2 Belgium        48.5       53.3
+ 3 Denmark        56.4       62.8
+ 4 France         68.4       91.6
+ 5 Germany        60.7       81.2
+ 6 Greece         80.3       86.8
+ 7 Ireland        60.5       66.0
+ 8 Italy          61.4       97.9
+ 9 Netherlands    68.1       75.2
+10 Portugal       81.6       67.2
+11 Spain          82.8      118. 
+12 UK             76.9       67.7</code></pre>
+</div>
+</div>
+<p>Highest engagement was found in milestone group in Italy and the lowest in control group of Belgium. Mostly engagement is higher for all test groups than control groups, except for Portugal and UK.&nbsp;</p>
+<p><strong>Visual Distribution</strong></p>
+<p>A Ridge plot was chosen to include all countries,&nbsp; test and control groups, to observe potential country variation in baseline engagement and feature-effect.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>figure1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(app, <span class="fu">aes</span>(<span class="at">x =</span> app_use, <span class="at">y =</span> ms_feat.f, <span class="at">fill =</span> ms_feat.f)) <span class="sc">+</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density_ridges</span>(<span class="at">alpha =</span> <span class="fl">0.85</span>, <span class="at">scale =</span> <span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> country, <span class="at">ncol =</span> <span class="dv">4</span>) <span class="sc">+</span> </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#660033"</span>, <span class="st">"#CC6699"</span>),</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"0= Control"</span>, <span class="st">"1=Milestone Users"</span>)) <span class="sc">+</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"App Usage Distribution Across Countries and Conditions"</span>, <span class="at">x =</span> <span class="st">"Weekly App Usage"</span>, <span class="at">y =</span> <span class="st">"Condition"</span>, </span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Figure 1: Ridge plot"</span>, <span class="at">fill =</span> <span class="st">"Group"</span>) <span class="sc">+</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">"bold"</span>), </span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">10</span>, <span class="at">face =</span> <span class="st">"italic"</span>), <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>))</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>figure1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="a_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>There is a visible positive shift in engagement for milestone users in countries like Spain, Italy, France and Germany. Importantly, for Portugal and UK, the controls have higher engagement than test group, suggesting that features-effect could differ regionally.&nbsp;</p>
+</section>
+<section id="analysis" class="level3">
+<h3 class="anchored" data-anchor-id="analysis"><strong>Analysis</strong></h3>
+<p><strong>Random intercepts model (RIM)</strong></p>
+<p><strong>Methodological justification &amp; specification</strong></p>
+<p>It is an appropriate model because the outcome variable is continuous, unlike a t-test, that isn’t sensitive to geographic differences, by applying “complete pooling”, the RIM acknowledges users nested in 12 different countries by ‘partial pooling’. For example, users in Spain may engage more than users in Belgium regardless of feature, RIM applies the global average to stabilize estimates for countries with greater variance, which reduces over-fitting of the estimates(Ramírez, 2021).</p>
+<p>The model formatted as an equation:</p>
+<p>‘app_useij​ = γ00​ +β1​ms_feat.fij​ + u0j​ + ϵij’​</p>
+<ol type="1">
+<li><p>app_useij : usage for user ‘i’ in country ‘j’</p></li>
+<li><p>γ00: average usage-control group</p></li>
+<li><p>β1: Fixed effect-milestone feature (fixed slope)</p></li>
+<li><p>u0j: Random Intercept for country ‘j’: displacement from global average</p></li>
+<li><p>​ϵij: Individual residual-error</p></li>
+</ol>
+<p>RIM fit allows countries to vary in their baseline engagement to generalize for population variability. This enables the product analyst to evaluate the ‘true’ milestone feature-effect.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a> app_rim <span class="ot">&lt;-</span> <span class="fu">lmer</span>(app_use <span class="sc">~</span> ms_feat.f <span class="sc">+</span>  (<span class="dv">1</span><span class="sc">|</span>country), <span class="at">data =</span> app) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Intraclass Correlation Coefficient (ICC)</strong></p>
+<p>A statistical tool measuring the proportion of total variance explained by cluster effects(country-level differences in engagement) (Wu , 2024).</p>
+<p><strong>Results</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(app_rim)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+lmerModLmerTest]
+Formula: app_use ~ ms_feat.f + (1 | country)
+   Data: app
+
+REML criterion at convergence: 67341.4
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.6667 -0.6700 -0.0043  0.6750  3.5722 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ country  (Intercept) 166.6    12.91   
+ Residual             220.8    14.86   
+Number of obs: 8169, groups:  country, 12
+
+Fixed effects:
+            Estimate Std. Error       df t value             Pr(&gt;|t|)    
+(Intercept)   68.813      3.733   11.041   18.43        0.00000000121 ***
+ms_feat.f1    11.162      0.329 8156.028   33.93 &lt; 0.0000000000000002 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+           (Intr)
+ms_feat.f1 -0.044</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">icc</span>(app_rim)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Intraclass Correlation Coefficient
+
+    Adjusted ICC: 0.430
+  Unadjusted ICC: 0.398</code></pre>
+</div>
+</div>
+<p><strong>Interpretation</strong></p>
+<p>There is a significant difference between the two feature conditions(milestone vs control) p &lt; .001, after controlling for country-level variation.</p>
+<p>The estimated weekly app-usage for the baseline condition (control group) is 68.81 across countries. The ‘Milestones’ feature significantly increased engagement by approximately 11.16 minutes per week, based on the country, indicating a positive effect on engagement. Importantly, residual errors ( 220.8) were larger than between-country variance(166.6).</p>
+<p>Additionally the ICC, reveals that 43% of the total variance in engagement is attributable to country-level differences.</p>
+<p><strong>Visual Interpretation</strong></p>
+<p>Intercept Deviation and Spaghtetti plot apt for tracing feature behaviour of multiple clusters.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract random intercepts</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>app_int <span class="ot">&lt;-</span> <span class="fu">ranef</span>(app_rim)<span class="sc">$</span>country <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">rownames_to_column</span>(<span class="st">"country"</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create ggplot for intercepts</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>figure2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(app_int, <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>,<span class="at">y =</span> <span class="fu">reorder</span>(country, <span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>))) <span class="sc">+</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">color =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>( <span class="at">x =</span> <span class="st">"Random Intercept"</span>,<span class="at">y =</span> <span class="st">"Country"</span>, <span class="at">caption =</span> <span class="st">"Figure.2"</span>) <span class="sc">+</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.2</span>, <span class="at">size =</span> <span class="dv">9</span>, <span class="at">face=</span> <span class="st">"italic"</span>))</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Fitted-values plot</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>app_fitted <span class="ot">&lt;-</span> broom.mixed<span class="sc">::</span><span class="fu">augment</span>(app_rim)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>figure3 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(app_fitted, <span class="fu">aes</span>(<span class="at">x =</span> ms_feat.f,<span class="at">y =</span> app_use,<span class="at">color =</span> country)) <span class="sc">+</span><span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted,<span class="at">group =</span> country),<span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_brewer</span>(<span class="at">palette =</span> <span class="st">"Paired"</span>) <span class="sc">+</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Condition (0 = Control, 1 = Test)"</span>,<span class="at">y =</span> <span class="st">"Weekly App Usage"</span>, <span class="at">caption =</span> <span class="st">"Figure.3: Parallel lines show the shared 11.16 slope"</span>)<span class="sc">+</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">9</span>, <span class="at">face=</span> <span class="st">"italic"</span>), <span class="at">legend.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">9</span>),</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">8</span>))</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>combined_plots <span class="ot">&lt;-</span> figure2 <span class="sc">+</span> figure3</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>final_rsm <span class="ot">&lt;-</span> combined_plots <span class="sc">+</span> </span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>() <span class="sc">&amp;</span> </span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>( <span class="at">plot.background =</span> <span class="fu">element_blank</span>(),<span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a><span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span>), <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>finalrim_figure <span class="ot">&lt;-</span> <span class="fu">wrap_elements</span>(final_rsm) <span class="sc">+</span> </span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">linewidth =</span> <span class="fl">1.5</span>))<span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Random Intercepts by Country &amp; Fixed Slope: Feature Influence"</span>)</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">repr.plot.width =</span> <span class="dv">40</span>, <span class="at">repr.plot.height =</span> <span class="dv">10</span>)</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>finalrim_figure</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="a_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Figures, revealed that Spain has the highest positive deviation from global intercept and Belgium showing the highest negative deviation.&nbsp;</p>
+<p><strong>Random Intercepts + Slopes Model (RISM)</strong></p>
+<p><strong>Methodological Justification &amp; Specification</strong></p>
+<p>In contrast to RIM, that assumes the ‘Milestones’ feature causes a homogenous increase in engagement, the RISM allows Milestone’s influence to vary(by adding random slopes). This enables product analysts to capture realistic insights due to unaccounted local market trends that could consecutively impact engagement, reducing chances of a type-1 error(Heisig, 2019).&nbsp;</p>
+<p>In the equation for RISM, (u1j ) is added to the RIM equation, which accounts for&nbsp; the country-specific Milestones effect(slope). The new model can be equated as:</p>
+<p>app_useij​= γ00​ ​+ (β1​+u1j​)(ms_featij​)+ u0j​+ ϵij</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>app_rsm <span class="ot">&lt;-</span> <span class="fu">lmer</span>(app_use <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> ms_feat.f <span class="sc">+</span> (<span class="dv">1</span><span class="sc">+</span>ms_feat.f<span class="sc">|</span>country), <span class="at">data =</span> app)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Results</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(app_rsm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Linear mixed model fit by REML. t-tests use Satterthwaite's method [
+lmerModLmerTest]
+Formula: app_use ~ 1 + ms_feat.f + (1 + ms_feat.f | country)
+   Data: app
+
+REML criterion at convergence: 65088.2
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.5784 -0.6685  0.0128  0.6699  4.0475 
+
+Random effects:
+ Groups   Name        Variance Std.Dev. Corr 
+ country  (Intercept) 128.2    11.32         
+          ms_feat.f1  239.3    15.47    -0.11
+ Residual             166.3    12.90         
+Number of obs: 8169, groups:  country, 12
+
+Fixed effects:
+            Estimate Std. Error     df t value      Pr(&gt;|t|)    
+(Intercept)   68.698      3.275 11.001  20.979 0.00000000032 ***
+ms_feat.f1    11.311      4.475 10.999   2.528        0.0281 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Correlation of Fixed Effects:
+           (Intr)
+ms_feat.f1 -0.113</code></pre>
+</div>
+</div>
+<p><strong>ICC</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">icc</span>(app_rsm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># Intraclass Correlation Coefficient
+
+    Adjusted ICC: 0.578
+  Unadjusted ICC: 0.535</code></pre>
+</div>
+</div>
+<p><strong>Interpretation</strong></p>
+<p>Fixed effects for the Milestones feature remained positive and statistically significant (β=11.31, SE = 4.48, p=.028), indicating that on average test groups spent 11 additional minutes compared to the control.</p>
+<p>Based on Intercept’s variance, 128.2 represents the variability in minutes of&nbsp; baseline engagement(control group). Variability of&nbsp; milestone features across countries is 239.3 (ms_feat.f1). Residual variance of 166.6 represents individual-level variability after controlling for country and feature-effect.&nbsp;</p>
+<p>Approximately 58% of the variance(ICC) in engagement is attributed to country-level differences while depending on feature condition.</p>
+<p><strong>Visual Interpretation</strong></p>
+<p><strong>Intercept &amp; Slope Deviation Graphs</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extracting random intercepts </span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>app_rsm_effects <span class="ot">&lt;-</span> lme4<span class="sc">::</span><span class="fu">ranef</span>(app_rsm)<span class="sc">$</span>country <span class="sc">%&gt;%</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  tibble<span class="sc">::</span><span class="fu">rownames_to_column</span>(<span class="st">"country"</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co"># slope</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>app_rsm_effects <span class="ot">&lt;-</span> app_rsm_effects <span class="sc">%&gt;%</span> </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">country =</span> <span class="fu">reorder</span>(country, <span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>))</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co">#  Random Intercepts </span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>figure2_int <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(app_rsm_effects, <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">(Intercept)</span><span class="st">`</span>, <span class="at">y =</span> country)) <span class="sc">+</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">color =</span> <span class="st">"steelblue"</span>) <span class="sc">+</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Random Intercepts"</span>, <span class="at">x =</span> <span class="st">"Random Intercept Deviation"</span>, <span class="at">y =</span> <span class="st">"Country"</span>, <span class="at">caption =</span> <span class="st">"Figure. 4a"</span>) <span class="sc">+</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.2</span>, <span class="at">size =</span> <span class="dv">9</span>, <span class="at">face =</span> <span class="st">"italic"</span>), </span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">9</span>), </span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">9</span>))</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Random Slopes</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>figure2_slope <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(app_rsm_effects, <span class="fu">aes</span>(<span class="at">x =</span> ms_feat.f1, <span class="at">y =</span> country)) <span class="sc">+</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">color =</span> <span class="st">"darkgreen"</span>) <span class="sc">+</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Random Slopes"</span>, <span class="at">x =</span> <span class="st">"Random Feature Influence"</span>, <span class="at">y =</span> <span class="st">"Country"</span>, <span class="at">caption =</span> <span class="st">"Figure. 4b"</span>) <span class="sc">+</span></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.2</span>, <span class="at">size =</span> <span class="dv">9</span>, <span class="at">face =</span> <span class="st">"italic"</span>), </span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">9</span>), <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">9</span>))</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a><span class="co"># combine</span></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>final_rsmplot <span class="ot">&lt;-</span> (figure2_int <span class="sc">+</span> figure2_slope) </span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>finalrsm_figure <span class="ot">&lt;-</span> <span class="fu">wrap_elements</span>(final_rsmplot) <span class="sc">+</span> </span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">linewidth =</span> <span class="fl">1.5</span>))</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">repr.plot.width =</span> <span class="dv">18</span>, <span class="at">repr.plot.height =</span> <span class="dv">8</span>)</span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>finalrsm_figure</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="a_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Spaghtetti plot</strong></p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">#  model-fitted values </span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>app_fitrs <span class="ot">&lt;-</span> broom.mixed<span class="sc">::</span><span class="fu">augment</span>(app_rsm)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co">#plotting</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(app_fitrs, <span class="fu">aes</span>(<span class="at">x =</span> ms_feat.f, <span class="at">y =</span> app_use, <span class="at">color =</span> country)) <span class="sc">+</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 2. This keeps your parallel model lines clean and straight</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> .fitted, <span class="at">group =</span> country), <span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span> </span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_brewer</span>(<span class="at">palette =</span> <span class="st">"Paired"</span>)<span class="sc">+</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"App Usage: Random Slope Model"</span>,</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Non-Parallel lines showing varied effects of Milestone"</span>,<span class="at">x =</span> <span class="st">"Condition (0 = Control, 1 = Test)"</span>,<span class="at">y =</span> <span class="st">"Weekly App Usage"</span>, <span class="at">caption =</span> <span class="st">"Figure. 5"</span>)<span class="sc">+</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>), <span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">10</span>, <span class="at">face =</span> <span class="st">"italic"</span>), <span class="at">plot.subtitle =</span><span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="a_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Figure .4 depicts that Spain and Portugal have the highest weekly engagement for control groups, however based on Figure. 5, Spain shows the highest positive-effect in engagement while Portugal shows a negative one. Reflecting that higher intercept doesn’t determine greater positive-effect of milestones.&nbsp;&nbsp;</p>
+<p><strong>Model Selection</strong></p>
+<p>Likelihood ratio-test(LRT) can help product analysts make a confident decision on whether including country variation in milestone feature-effects&nbsp; improves model reliability. Anova was chosen for its compatibility for nested mixed-effects models(Kingdom, 2016).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Likelihood Ratio Test </span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(app_rim, app_rsm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>refitting model(s) with ML (instead of REML)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Data: app
+Models:
+app_rim: app_use ~ ms_feat.f + (1 | country)
+app_rsm: app_use ~ 1 + ms_feat.f + (1 + ms_feat.f | country)
+        npar   AIC   BIC logLik -2*log(L)  Chisq Df            Pr(&gt;Chisq)    
+app_rim    4 67353 67381 -33673     67345                                    
+app_rsm    6 65109 65151 -32549     65097 2248.3  2 &lt; 0.00000000000000022 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>RISM is considered&nbsp; the better fit because it has much lower AIC (65109 vs 67353), much higher log-likelihood and is highly significant LRT (χ² = 2248.3, p &lt; 0.001)</p>
+</section>
+<section id="assumptions-diagnostics" class="level3">
+<h3 class="anchored" data-anchor-id="assumptions-diagnostics">Assumptions &amp; Diagnostics</h3>
+<ol type="1">
+<li><strong>Linearity</strong> <strong>and Homoscedasticity</strong></li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>(<span class="fu">check_model</span>(app_rsm, <span class="at">check =</span> <span class="st">"linearity"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="a_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The reference line is mostly flat, showing a minor deviation at the tail. However there are no visible U/S curves. Furthermore, the vertical spread of the individual residual points is highly uniform across all vertical strips. Hence the assumption of linearity is mostly met and Homoscedasticity is sufficiently satisfied.</p>
+<ol start="2" type="1">
+<li><strong>Normality of Residuals</strong></li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(app_rsm, <span class="at">check =</span> <span class="st">"normality"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="a_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect further via QQ plot</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">check_model</span>(app_rsm, <span class="at">check =</span> <span class="st">"qq"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="a_files/figure-html/unnamed-chunk-18-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This Density and QQ-style residual diagnostic suggests normality assumption is largely satisfied, with only mild deviations in the tails.</p>
+<ol start="3" type="1">
+<li><strong>Normality of Random intercepts &amp; slopes</strong></li>
+</ol>
+<p>It is crucial to ensure whether the country-level variations of milestone feature-effect on engagement&nbsp; is symmetrically distributed to ensure the validity of RISM.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co">#level 2 Diagnostics: Normality of Intercepts and Slopes</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>random_effects <span class="ot">&lt;-</span> <span class="fu">ranef</span>(app_rsm)<span class="sc">$</span>country</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(random_effects<span class="sc">$</span><span class="st">"(Intercept)"</span>, <span class="at">main =</span> <span class="st">"Q-Q Plot: Random Intercepts"</span>)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(random_effects<span class="sc">$</span><span class="st">"(Intercept)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="a_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(random_effects<span class="sc">$</span>ms_feat.f1, <span class="at">main =</span> <span class="st">"Q-Q Plot: Random Slopes"</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(random_effects<span class="sc">$</span>ms_feat.f1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="a_files/figure-html/unnamed-chunk-19-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>For a sample of just 12 clusters, both plots are stable, with no heavy skews or highly tailed outliers. Thereby normality of intercepts and slopes is reasonably satisfied.</p>
+</section>
+<section id="part-ii-stochastic-power-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="part-ii-stochastic-power-analysis">Part II: Stochastic Power Analysis</h3>
+<p><strong>Method Justification</strong></p>
+<p>Testing the minimum sample requirement for 90% power based on RISM for future trials. The stochastic methods can handle mixed and multiple random effects that generally causes a standard power analysis to collapse when dealing with clustered data (Brysbaert, 2018) . It assumes the future variance structures to resemble the current dataset’s.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create data index</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>index <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(app)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Empty dataframe</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>sim_results1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_ppts =</span> <span class="cn">NULL</span>,<span class="at">p_val =</span> <span class="cn">NULL</span>)</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Counter</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>row_counter1 <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="co">#  sample sizes</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (n <span class="cf">in</span> <span class="fu">seq</span>(<span class="dv">100</span>, <span class="dv">1200</span>, <span class="dv">90</span>)) {</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>) {</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Resample rows</span></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>    resample_index1 <span class="ot">&lt;-</span> <span class="fu">sample</span>(index, <span class="at">size =</span> n,</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>                             <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create resampled dataset</span></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>    resample_dat1 <span class="ot">&lt;-</span> app[resample_index1, ]</span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Fit model</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>    new_mod1 <span class="ot">&lt;-</span> <span class="fu">lmer</span>(app_use <span class="sc">~</span> ms_feat.f <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> ms_feat.f <span class="sc">|</span> country),</span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">data =</span> resample_dat1)</span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Store results</span></span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a>    row_counter1 <span class="ot">&lt;-</span> row_counter1 <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a>    sim_results1[row_counter1, <span class="st">"n_ppts"</span>] <span class="ot">&lt;-</span> n</span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>    sim_results1[row_counter1, <span class="st">"p_val"</span>] <span class="ot">&lt;-</span></span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summary</span>(new_mod1)<span class="sc">$</span>coefficients[</span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">"ms_feat.f1"</span>,</span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Pr(&gt;|t|)"</span> ]}}</span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate power for each set of participants</span></span>
+<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a>sim_power1 <span class="ot">&lt;-</span> sim_results1 <span class="sc">%&gt;%</span> </span>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(n_ppts) <span class="sc">%&gt;%</span> </span>
+<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">power =</span> <span class="fu">mean</span>(p_val <span class="sc">&lt;</span> .<span class="dv">05</span>))</span>
+<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a>sim_power1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 13 × 2
+   n_ppts power
+    &lt;dbl&gt; &lt;dbl&gt;
+ 1    100 0.458
+ 2    190 0.613
+ 3    280 0.676
+ 4    370 0.737
+ 5    460 0.77 
+ 6    550 0.793
+ 7    640 0.823
+ 8    730 0.835
+ 9    820 0.869
+10    910 0.887
+11   1000 0.9  
+12   1090 0.908
+13   1180 0.938</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Quantifying the convergence and singular-fit issues</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>fail_count <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>total_models <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>model_try <span class="ot">&lt;-</span> <span class="fu">try</span>(</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lmer</span>(app_use <span class="sc">~</span> ms_feat.f <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">+</span> ms_feat.f <span class="sc">|</span> country),</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">data =</span> resample_dat),</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">class</span>(model_try) <span class="sc">==</span> <span class="st">"try-error"</span>) {</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>  fail_count <span class="ot">&lt;-</span> fail_count <span class="sc">+</span> <span class="dv">1</span>}</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>fail_count</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co">#proportion: showing zero model fails</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>fail_count <span class="sc">/</span> total_models </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.001</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co">#visualizing the power analysis</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sim_power1, <span class="fu">aes</span>(<span class="at">x =</span> n_ppts, <span class="at">y =</span> power)) <span class="sc">+</span>  </span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span>  </span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>   <span class="co"># 90% power horizontal reference line</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.9</span>, <span class="at">linetype =</span> <span class="st">"longdash"</span>, <span class="at">color =</span> <span class="st">"darkgray"</span>) <span class="sc">+</span>  </span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">1000</span>, <span class="at">linetype =</span> <span class="st">"dotted"</span>, <span class="at">color =</span> <span class="st">"#660033"</span>, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># adding the dot at intersection point</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> <span class="fu">filter</span>(sim_power1, n_ppts <span class="sc">==</span> <span class="dv">1000</span>), <span class="at">color =</span> <span class="st">"#660033"</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span>  </span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">data =</span> <span class="fu">filter</span>(sim_power1, n_ppts <span class="sc">==</span> <span class="dv">1000</span>), </span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste</span>(<span class="st">"n = 1000</span><span class="sc">\n</span><span class="st">Power ="</span>, <span class="fu">round</span>(power, <span class="dv">3</span>))), </span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"#660033"</span>, <span class="at">fontface =</span> <span class="st">"bold"</span>,<span class="at">vjust =</span> <span class="fl">1.2</span>, <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.15</span>) <span class="sc">+</span></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="dv">1</span>))<span class="sc">+</span></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Sample Size(Minimum Number of Participants)"</span>, <span class="at">y =</span> <span class="st">"Statistical Power"</span>) <span class="sc">+</span> <span class="fu">coord_cartesian</span>(<span class="at">clip =</span> <span class="st">"off"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="a_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="interpretation" class="level4">
+<h4 class="anchored" data-anchor-id="interpretation"><strong>Interpretation</strong></h4>
+<p>To achieve 90% statistical power, a minimum requirement of 1000 participants was estimated as seen on Figure. 6(intersection point).</p>
+</section>
+</section>
+<section id="critical-evaluation-and-conclusion" class="level3">
+<h3 class="anchored" data-anchor-id="critical-evaluation-and-conclusion"><strong>Critical Evaluation and Conclusion</strong></h3>
+<p>The main positive strength of the fitted mixed-effects models is accounting for nested structure(countries) of the data, which often gets overlooked in t-tests. Although both RIM and RISM found a significant relationship of milestone effect on app engagement, the RISM meaningfully captured data better and is comparatively practical for planning effective strategies.</p>
+<p>The findings of RIM could be oversimplified, due to its restrictive modelling assumptions. When a random slope was added, residual errors reduced from 220 to 166.6 . Antonakis, (2019) explains that RIM assumes a homogenous feature-effect, hence the differences between countries gets masked and consecutively increases individual residual-error. This assumption could be unrealistic given figure.1 &amp; figure.5 showing only UK and Poland having declined engagement for test group.&nbsp;</p>
+<p>Additionally, when RISM was fitted, standard error increased from 0.3 to 4.9. Theoretically it reflects lower statistical precision and greater uncertainty,&nbsp; but it provides a more realistic estimate because the model doesn’t assume homogenous feature-effects globally(Bristol, 2026). Furthermore, the ICC of RISM(58%) being higher than the RIM(43%), indicated that more variability was recognised as country-level rather than purely individual noise, showing how feature-effect&nbsp; is regionally subjective.&nbsp;&nbsp;</p>
+<p>Imagining the perspective of a product analyst, the RISM presented more detailed insights. Since it depicted how countries like Spain and Italy had greater positive response on engagement compared to others (steeper slopes as seen on figure.5), Instagrammer may strategically benefit from fast-tracking roll-out and investment on marketing in these regions. Whereas countries like Portugal and UK, urges analysts to investigate them further for macro-market conditions or local competitors(having similar features) for incentivising Instagrammar to stand-out. Although complex, this shows how RISM is the better model, as supported by the LRT.</p>
+<p>Power analysis revealed that larger samples of 1000 is required to account for substantial between-country variances of feature-effect and to stabilise parameter uncertainty. However it is important to recognize a few limitations. Theoretically, 30-50 clusters(countries) are recommended to gain reliable stability of heterogenous feature-effects(slopes)(Wiley, 2018).&nbsp; Although not considered problematic by the quality check, a small proportion of singular-fit and convergence warnings were reflected in the analysis; future alternative recommendations could be Bayesian analysis as it handles data with few clusters well(McNeish, 2016).&nbsp;&nbsp;</p>
+<p>Furthermore, engagement was recorded only for the first week. This means the findings cannot reflect whether engagement is sustained or if some regions are slower/faster to accept new features in the market. To conclude a mixed effects model capturing longitudinal data over a few months and includes more clusters to evaluate feature-effect on engagement can enable the product analyst to plan even reliable and effective localised strategies.&nbsp;</p>
+<p><strong>Word Count excluding main headings:</strong> 1500</p>
+</section>
+<section id="references" class="level3">
+<h3 class="anchored" data-anchor-id="references">References</h3>
+<p>Antonakis, J., Bastardoz, N., &amp; Rönkkö, M. (2019). On Ignoring the Random Effects Assumption in Multilevel Models: Review, Critique, and Recommendations. <em>Organizational Research Methods</em>, 109442811987745. https://doi.org/10.1177/1094428119877457</p>
+<p>Bristol (Ed.). (2026). <em>Random slope models</em>. Www.bristol.ac.uk. https://www.bristol.ac.uk/cmm/learning/videos/random-slopes.html</p>
+<p>Brysbaert, M., &amp; Stevens, M. (2018). Power Analysis and Effect Size in Mixed Effects Models: A Tutorial. <em>Journal of Cognition</em>, <em>1</em>(1). https://doi.org/10.5334/joc.10</p>
+<p>Heisig, J. P., &amp; Schaeffer, M. (2019). Why You Should Always Include a Random Slope for the Lower-Level Variable Involved in a Cross-Level Interaction. <em>European Sociological Review</em>, <em>35</em>(2), 258–279. https://doi.org/10.1093/esr/jcy053</p>
+<p>Kingdom, F. A. A., &amp; Prins, N. (2016). Model Comparisons. <em>Psychophysics</em>, 247–307. https://doi.org/10.1016/b978-0-12-407156-8.00009-8</p>
+<p>McNeish, D., &amp; Stapleton, L. M. (2016). Modeling Clustered Data with Very Few Clusters. <em>Multivariate Behavioral Research</em>, <em>51</em>(4), 495–518. https://doi.org/10.1080/00273171.2016.1167008</p>
+<p>Ramírez-Aldana, R., &amp; Naranjo, L. (2021). Random intercept and linear mixed models including heteroscedasticity in a logarithmic scale: Correction terms and prediction in the original scale. <em>PLOS ONE</em>, <em>16</em>(4), e0249910. https://doi.org/10.1371/journal.pone.0249910</p>
+<p>Wiley, R. W., &amp; Rapp, B. (2018). Statistical analysis in Small-N Designs: using linear mixed-effects modeling for evaluating intervention effectiveness. <em>Aphasiology</em>, <em>33</em>(1), 1–30. https://doi.org/10.1080/02687038.2018.1454884</p>
+<p>Wu , S. (2024). <em>Comparison of Methods for Estimating the Intraclass Correlation Coefficient for Binary Responses in Cancer Prevention Cluster Randomized Trials</em>. Nih.gov. https://pmc.ncbi.nlm.nih.gov/articles/PMC3426610/</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
