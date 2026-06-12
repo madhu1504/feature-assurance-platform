@@ -8,7 +8,7 @@ This project evaluates the effectiveness of a newly introduced **"Milestones"** 
 
 The analysis uses **Linear Mixed-Effects Models (LMMs)** to account for the hierarchical structure of users nested within countries and compares a **Random Intercept Model** with a **Random Intercept + Random Slope Model** to determine whether feature performance varies geographically.
 
-A **Monte Carlo simulation-based power analysis** is then conducted to estimate the minimum sample size required for a future **"Daily Streaks"** experiment while achieving **90% statistical power**.
+A stochastic simulation-based power analysis** is then conducted to estimate the minimum sample size required for a future **"Daily Streaks"** experiment while achieving **90% statistical power**.
 
 ## Key Objectives
 
